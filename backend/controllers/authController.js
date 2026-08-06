@@ -105,11 +105,11 @@ const loginUser = async (req, res) => {
     // Normalize email for consistent querying
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Find user by email
-    const user = await User.findOne({ email: normalizedEmail });
+    // Find user by email and explicitly select password field
+    const user = await User.findOne({ email: normalizedEmail }).select('+password');
 
     // Check if user exists and password matches
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await user.matchPassword(password))) {
       res.json({
         success: true,
         data: {

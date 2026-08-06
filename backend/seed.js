@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
 const User = require('./models/User');
 
@@ -14,37 +13,34 @@ const seedUsers = async () => {
     await User.deleteMany({});
     console.log('Cleared existing users...');
 
-    // Hash passwords
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('password123', salt);
-
-    // Create initial users
+    // Create initial users with plain text passwords
+    // The pre('save') hook in User.js will automatically hash them
     const users = [
       {
         name: 'Admin User',
         email: 'admin@test.com',
-        password: hashedPassword,
+        password: 'password123',
         role: 'Admin',
         department: 'IT',
       },
       {
         name: 'Receptionist User',
         email: 'receptionist@test.com',
-        password: hashedPassword,
+        password: 'password123',
         role: 'Receptionist',
         department: 'Front Desk',
       },
       {
         name: 'Employee User',
         email: 'employee@test.com',
-        password: hashedPassword,
+        password: 'password123',
         role: 'Employee',
         department: 'Engineering',
       },
       {
         name: 'Employee Two',
         email: 'employee2@test.com',
-        password: hashedPassword,
+        password: 'password123',
         role: 'Employee',
         department: 'Engineering',
       },
