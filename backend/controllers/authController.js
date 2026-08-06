@@ -102,8 +102,11 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // Normalize email for consistent querying
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Find user by email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
 
     // Check if user exists and password matches
     if (user && (await bcrypt.compare(password, user.password))) {
