@@ -103,24 +103,38 @@ const loginUser = async (req, res) => {
     }
 
     // Normalize email for consistent querying
-    const normalizedEmail = email.toLowerCase().trim();
+    const cleanEmail = email.toLowerCase().trim();
 
     // Find user by email and explicitly select password field
-    const user = await User.findOne({ email: normalizedEmail }).select('+password');
+    const user = await User.findOne({ email: cleanEmail }).select('+password');
 
-    // Check if user exists and password matches
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        success: true,
-        data: {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          department: user.department,
-          token: generateToken(user._id),
-        },
-      });
+    // DEBUG LOGGING FOR RENDER
+    console.log('[AUTH DEBUG] Email received:', cleanEmail);
+    console.log('[AUTH DEBUG] User found in DB:', !!user);
+    if (user) {
+      console.log('[AUTH DEBUG] Stored Password Hash:', user.password);
+      const isMatch = await user.matchPassword(password);
+      console.log('[AUTH DEBUG] Bcrypt match result:', isMatch);
+      
+      // Check if user exists and password matches
+      if (isMatch) {
+        res.json({
+          success: true,
+          data: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            department: user.department,
+            token: generateToken(user._id),
+          },
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          message: 'Invalid email or password',
+        });
+      }
     } else {
       res.status(401).json({
         success: false,
