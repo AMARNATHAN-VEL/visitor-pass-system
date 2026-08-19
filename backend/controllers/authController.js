@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-const bcrypt = require("bcryptjs");
 
 const sendControllerError = (res, statusCode, message) =>
   res.status(statusCode).json({
@@ -55,15 +54,11 @@ const registerUser = async (req, res, next) => {
       );
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     // Create user
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       role: assignedRole,
       department,
     });
