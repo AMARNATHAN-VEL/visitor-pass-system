@@ -702,3 +702,19 @@ This is a demonstration project for technical review. For production use:
 - **Timezone Date Alignment:** Refactored visitor registration and date parsing logic to handle local calendar dates (`YYYY-MM-DD`), eliminating UTC timezone offset errors during pass creation.
 - **Server Resilience & API Security:** Enforced mandatory database connection initialization prior to HTTP listener startup, restricted CORS policies to authorized client domains, and integrated `helmet` with rate-limiting middleware.
 - **Notification Parity & UI Guardrails:** Standardized bulk checkout handlers to dispatch visitor/host notification alerts and added defensive array type checks (`Array.isArray()`) across React page states to prevent client-side render exceptions.
+
+
+---
+
+## Additional Task Requirements (Completed)
+
+All requested additional logic and features have been fully implemented, tested, and deployed:
+
+* **Queue Management & Capacity Limits:** Enforced a strict per-employee limit of 1 active `ONGOING` meeting and up to 3 `IN_QUEUE` visitors.
+* **Auto-Allotment System:** Automatically routes incoming visitors to available department employees when a target host's queue capacity is reached.
+* **Cumulative 10-Minute Time Extension:** Added host meeting extension functionality with a hard-capped cumulative total of 10 minutes maximum per visit.
+* **Real-Time Dashboards:** Configured 5-second polling on Admin and Receptionist views to reflect active meetings and queue changes dynamically without page refreshes.
+* **Receptionist Priority Re-Allotment:** Allowed receptionists to re-assign queued visitors across host employees while verifying capacity checks.
+* **Printable Visitor Pass & QR Code:** Built the Visitor Pass modal matching the target PDF specification, featuring dynamic QR code generation (`qrcode.react`), status badges, complete authorization details, and `@media print` formatting for PDF export.
+
+**Implementation Time:** ~40 minutes total (12:30 PM – 1:00 PM & 2:00 PM – 2:10 PM)
