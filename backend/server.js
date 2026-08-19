@@ -14,11 +14,14 @@ dotenv.config();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-  }),
-);
+const corsOptions = {
+  origin: "https://visitor-pass-system-task.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+};
+
+app.options("*", cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 
