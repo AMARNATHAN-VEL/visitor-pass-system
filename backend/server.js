@@ -1,32 +1,64 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const visitorRoutes = require('./routes/visitorRoutes');
-const reportRoutes = require('./routes/reportRoutes');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const visitorRoutes = require("./routes/visitorRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config();
-connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+  }),
+);
+app.use(helmet());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many authentication attempts. Please try again later.",
+    error: "Too many authentication attempts. Please try again later.",
+    data: null,
+  },
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/visitors', visitorRoutes);
-app.use('/api/reports', reportRoutes);
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Visitor Pass Management API is healthy",
+    data: { status: "ok" },
+  });
+});
+
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/visitors", visitorRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+};
+
+startServer().catch((error) => {
+  console.error(`Server startup failed: ${error.message}`);
+  process.exit(1);
+});

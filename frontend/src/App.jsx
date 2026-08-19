@@ -1,23 +1,23 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login';
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
-import { useAuth } from './context/AuthContext';
+import { Navigate, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
 // Receptionist pages
-import RegisterVisitor from './pages/receptionist/RegisterVisitor';
-import CheckInOut from './pages/receptionist/CheckInOut';
+import RegisterVisitor from "./pages/receptionist/RegisterVisitor";
+import CheckInOut from "./pages/receptionist/CheckInOut";
 // Employee pages
-import PendingRequests from './pages/employee/PendingRequests';
+import PendingRequests from "./pages/employee/PendingRequests";
 // Admin pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ManageUsers from './pages/admin/ManageUsers';
-import Reports from './pages/admin/Reports';
-import ActivityLogs from './pages/admin/ActivityLogs';
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManageUsers from "./pages/admin/ManageUsers";
+import Reports from "./pages/admin/Reports";
+import ActivityLogs from "./pages/admin/ActivityLogs";
 
 const ROLE_HOME = {
-  Admin: '/admin/dashboard',
-  Receptionist: '/receptionist/register-visitor',
-  Employee: '/employee/pending-requests',
+  Admin: "/admin/dashboard",
+  Receptionist: "/receptionist/register-visitor",
+  Employee: "/employee/pending-requests",
 };
 
 function App() {
@@ -39,7 +39,7 @@ function App() {
         <Route
           path="/receptionist/register-visitor"
           element={
-            <ProtectedRoute allowedRoles={['Receptionist']}>
+            <ProtectedRoute allowedRoles={["Receptionist"]}>
               <RegisterVisitor />
             </ProtectedRoute>
           }
@@ -47,7 +47,7 @@ function App() {
         <Route
           path="/receptionist/check-in-out"
           element={
-            <ProtectedRoute allowedRoles={['Receptionist']}>
+            <ProtectedRoute allowedRoles={["Receptionist"]}>
               <CheckInOut />
             </ProtectedRoute>
           }
@@ -57,7 +57,7 @@ function App() {
         <Route
           path="/employee/pending-requests"
           element={
-            <ProtectedRoute allowedRoles={['Employee']}>
+            <ProtectedRoute allowedRoles={["Employee"]}>
               <PendingRequests />
             </ProtectedRoute>
           }
@@ -67,7 +67,7 @@ function App() {
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute allowedRoles={['Admin']}>
+            <ProtectedRoute allowedRoles={["Admin"]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -75,7 +75,7 @@ function App() {
         <Route
           path="/admin/employees"
           element={
-            <ProtectedRoute allowedRoles={['Admin']}>
+            <ProtectedRoute allowedRoles={["Admin"]}>
               <ManageUsers />
             </ProtectedRoute>
           }
@@ -83,7 +83,9 @@ function App() {
         <Route
           path="/admin/reports"
           element={
-            <ProtectedRoute allowedRoles={['Admin']}>
+            <ProtectedRoute
+              allowedRoles={["Admin", "Receptionist", "Employee"]}
+            >
               <Reports />
             </ProtectedRoute>
           }
@@ -91,7 +93,7 @@ function App() {
         <Route
           path="/admin/activity-logs"
           element={
-            <ProtectedRoute allowedRoles={['Admin']}>
+            <ProtectedRoute allowedRoles={["Admin"]}>
               <ActivityLogs />
             </ProtectedRoute>
           }
@@ -108,7 +110,7 @@ function App() {
  */
 function RoleHome() {
   const { user } = useAuth();
-  const home = ROLE_HOME[user?.role] || '/login';
+  const home = ROLE_HOME[user?.role] || "/login";
   return <Navigate to={home} replace />;
 }
 

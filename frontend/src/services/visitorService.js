@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 
 /**
  * Register a new visitor and create a visit request.
@@ -14,7 +14,7 @@ import api from './api';
  * @returns {Promise<{ visitRequest: Object, visitor: Object }>}
  */
 export const registerVisitor = async (payload) => {
-  const response = await api.post('/visitors/register', payload);
+  const response = await api.post("/visitors/register", payload);
   return response.data.data;
 };
 
@@ -25,8 +25,11 @@ export const registerVisitor = async (payload) => {
  * @param {string} [remarks]
  * @returns {Promise<Object>}
  */
-export const updateVisitStatus = async (id, status, remarks = '') => {
-  const response = await api.patch(`/visitors/${id}/status`, { status, remarks });
+export const updateVisitStatus = async (id, status, remarks = "") => {
+  const response = await api.patch(`/visitors/${id}/status`, {
+    status,
+    remarks,
+  });
   return response.data.data;
 };
 
@@ -55,15 +58,35 @@ export const checkOutVisitor = async (id) => {
  * @returns {Promise<Array<Object>>}
  */
 export const getPendingVisits = async () => {
-  const response = await api.get('/visitors/pending');
+  const response = await api.get("/visitors/pending");
   return response.data.data;
 };
 
 /**
- * Get active visits (excludes Cancelled).
+ * Get active visits (excludes Cancelled) with optional database-side filters.
+ * @param {Object} [filters]
  * @returns {Promise<Array<Object>>}
  */
-export const getActiveVisits = async () => {
-  const response = await api.get('/visitors/active');
+export const getActiveVisits = async (filters = {}) => {
+  const params = Object.fromEntries(
+    Object.entries(filters).filter(
+      ([key, value]) =>
+        value &&
+        !(key === "status" && value === "All") &&
+        !(key === "department" && value === "All"),
+    ),
+  );
+  const response = await api.get("/visitors/active", { params });
+  return response.data.data;
+};
+
+/**
+ * Apply a batch action to visit requests.
+ * @param {string[]} ids - Visit request ids.
+ * @param {'approve' | 'checkOut'} action
+ * @returns {Promise<{ matchedCount: number, modifiedCount: number }>}
+ */
+export const bulkVisitorAction = async (ids, action) => {
+  const response = await api.post("/visitors/bulk-action", { ids, action });
   return response.data.data;
 };

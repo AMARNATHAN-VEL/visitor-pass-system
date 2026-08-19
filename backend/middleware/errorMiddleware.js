@@ -5,10 +5,28 @@ const notFound = (req, res, next) => {
 };
 
 const errorHandler = (error, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let statusCode =
+    error.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
+  let errorMessage = error.message || "Internal server error";
+
+  if (error.name === "ValidationError") {
+    statusCode = 400;
+    errorMessage = Object.values(error.errors)
+      .map((validationError) => validationError.message)
+      .join(", ");
+  } else if (error.name === "CastError") {
+    statusCode = 400;
+    errorMessage = `Invalid ${error.path}`;
+  } else if (error.code === 11000) {
+    statusCode = 409;
+    errorMessage = "A record with the same unique value already exists";
+  }
+
   res.status(statusCode).json({
-    message: error.message,
-    stack: process.env.NODE_ENV === 'production' ? undefined : error.stack,
+    success: false,
+    message: errorMessage,
+    error: errorMessage,
+    data: null,
   });
 };
 

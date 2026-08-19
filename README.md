@@ -26,11 +26,11 @@ A production-ready full-stack application for managing visitor registration, app
 
 The system implements three distinct user roles with granular permissions:
 
-| Role | Permissions |
-|------|-------------|
-| **Admin** | Dashboard overview, user management, view reports, audit trail access |
-| **Receptionist** | Visitor registration, check-in/check-out operations |
-| **Employee** | Approve/reject pending visit requests, view personal requests |
+| Role             | Permissions                                                           |
+| ---------------- | --------------------------------------------------------------------- |
+| **Admin**        | Dashboard overview, user management, view reports, audit trail access |
+| **Receptionist** | Visitor registration, check-in/check-out operations                   |
+| **Employee**     | Approve/reject pending visit requests, view personal requests         |
 
 ### Business Rules & Constraints
 
@@ -45,6 +45,7 @@ The system implements three distinct user roles with granular permissions:
 ## Tech Stack
 
 ### Backend
+
 - **Runtime**: Node.js >= 18
 - **Framework**: Express.js 4.21
 - **Database**: MongoDB Atlas (Mongoose ODM 8.8)
@@ -52,6 +53,7 @@ The system implements three distinct user roles with granular permissions:
 - **Security**: CORS enabled, password hashing
 
 ### Frontend
+
 - **Framework**: React 18.3 with Vite 5.4
 - **Routing**: React Router 6.28
 - **State Management**: Context API (AuthContext)
@@ -60,6 +62,7 @@ The system implements three distinct user roles with granular permissions:
 - **Icons**: Lucide React 0.468
 
 ### Build & Development
+
 - **Backend**: Nodemon for hot reloading
 - **Frontend**: Vite HMR, Autoprefixer
 - **Package Manager**: npm
@@ -212,6 +215,7 @@ npm run seed
 ```
 
 **Expected Output:**
+
 ```
 Connected to MongoDB...
 Cleared existing users...
@@ -270,26 +274,40 @@ API Health Check: http://localhost:5000/api/health
 
 ### Backend (`backend/.env`)
 
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `PORT` | Backend server port | Yes | `5000` |
-| `MONGO_URI` | MongoDB Atlas connection string | Yes | `mongodb+srv://user:pass@cluster0.mongodb.net/visitor-pass?retryWrites=true&w=majority` |
-| `JWT_SECRET` | Secret key for signing JWT tokens | Yes | `your_super_secret_jwt_key_min_32_chars` |
+| Variable      | Description                           | Required                    | Example                                                                                 |
+| ------------- | ------------------------------------- | --------------------------- | --------------------------------------------------------------------------------------- |
+| `PORT`        | Backend server port                   | Yes                         | `5000`                                                                                  |
+| `MONGO_URI`   | MongoDB Atlas connection string       | Yes                         | `mongodb+srv://user:pass@cluster0.mongodb.net/visitor-pass?retryWrites=true&w=majority` |
+| `JWT_SECRET`  | Secret key for signing JWT tokens     | Yes                         | `your_super_secret_jwt_key_min_32_chars`                                                |
+| `SMTP_HOST`   | SMTP server hostname                  | Yes for email notifications | `smtp.gmail.com`                                                                        |
+| `SMTP_PORT`   | SMTP server port                      | No                          | `587`                                                                                   |
+| `SMTP_USER`   | SMTP account username                 | Yes for email notifications | `notifications@example.com`                                                             |
+| `SMTP_PASS`   | SMTP account password or app password | Yes for email notifications | `your_smtp_app_password`                                                                |
+| `SMTP_SECURE` | Use TLS from connection start         | No                          | `false` for port `587`                                                                  |
+| `SMTP_FROM`   | Sender address shown in emails        | No                          | `Visitor Pass System <notifications@example.com>`                                       |
 
 **Example `backend/.env` file:**
+
 ```env
 PORT=5000
 MONGO_URI=mongodb+srv://admin:your_password@cluster0.mongodb.net/visitor-pass?retryWrites=true&w=majority
 JWT_SECRET=your_super_secret_jwt_key_change_in_production_12345
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=notifications@example.com
+SMTP_PASS=your_smtp_app_password
+SMTP_SECURE=false
+SMTP_FROM="Visitor Pass System <notifications@example.com>"
 ```
 
 ### Frontend (`frontend/.env`)
 
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `VITE_API_URL` | Backend API base URL | Yes | `http://localhost:5000/api` |
+| Variable       | Description          | Required | Example                     |
+| -------------- | -------------------- | -------- | --------------------------- |
+| `VITE_API_URL` | Backend API base URL | Yes      | `http://localhost:5000/api` |
 
 **Example `frontend/.env` file:**
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -307,12 +325,12 @@ VITE_API_URL=http://localhost:5000/api
 
 After running `npm run seed`, the following test accounts are created with the password **`password123`** for all users:
 
-| Name | Email | Role | Department |
-|------|-------|------|------------|
-| Admin User | `admin@test.com` | Admin | IT |
-| Receptionist User | `receptionist@test.com` | Receptionist | Front Desk |
-| Employee User | `employee@test.com` | Employee | Engineering |
-| Employee Two | `employee2@test.com` | Employee | Engineering |
+| Name              | Email                   | Role         | Department  |
+| ----------------- | ----------------------- | ------------ | ----------- |
+| Admin User        | `admin@test.com`        | Admin        | IT          |
+| Receptionist User | `receptionist@test.com` | Receptionist | Front Desk  |
+| Employee User     | `employee@test.com`     | Employee     | Engineering |
+| Employee Two      | `employee2@test.com`    | Employee     | Engineering |
 
 ### Testing Different Roles
 
@@ -330,6 +348,7 @@ After running `npm run seed`, the following test accounts are created with the p
 ## API Documentation
 
 ### Base URL
+
 ```
 http://localhost:5000/api
 ```
@@ -337,6 +356,7 @@ http://localhost:5000/api
 ### Authentication
 
 All protected routes require a JWT token in the request header:
+
 ```
 Authorization: Bearer <your_jwt_token>
 ```
@@ -345,12 +365,13 @@ Authorization: Bearer <your_jwt_token>
 
 #### Authentication
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| `POST` | `/auth/register` | Register a new user | Admin |
-| `POST` | `/auth/login` | Login and receive JWT token | Public |
+| Method | Endpoint         | Description                 | Access |
+| ------ | ---------------- | --------------------------- | ------ |
+| `POST` | `/auth/register` | Register a new user         | Admin  |
+| `POST` | `/auth/login`    | Login and receive JWT token | Public |
 
 **Login Request:**
+
 ```json
 {
   "email": "admin@test.com",
@@ -359,6 +380,7 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 **Login Response:**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -374,24 +396,25 @@ Authorization: Bearer <your_jwt_token>
 
 #### Users
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| `GET` | `/users` | Get all users (optional `?role=Employee` filter) | Authenticated |
-| `GET` | `/users/:id` | Get user by ID | Authenticated |
+| Method | Endpoint     | Description                                      | Access        |
+| ------ | ------------ | ------------------------------------------------ | ------------- |
+| `GET`  | `/users`     | Get all users (optional `?role=Employee` filter) | Authenticated |
+| `GET`  | `/users/:id` | Get user by ID                                   | Authenticated |
 
 #### Visitors & Visit Requests
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| `POST` | `/visitors/register` | Register visitor + create visit request | Receptionist |
-| `PATCH` | `/visitors/:id/status` | Approve or reject visit request | Employee |
-| `PATCH` | `/visitors/:id/check-in` | Check in visitor | Receptionist |
-| `PATCH` | `/visitors/:id/check-out` | Check out visitor | Receptionist |
-| `GET` | `/visitors/pending` | Get pending requests for logged-in employee | Employee |
-| `GET` | `/visitors/active` | Get all active visits (excludes Cancelled) | Authenticated |
-| `GET` | `/visitors/history` | Get visit history | Authenticated |
+| Method  | Endpoint                  | Description                                 | Access        |
+| ------- | ------------------------- | ------------------------------------------- | ------------- |
+| `POST`  | `/visitors/register`      | Register visitor + create visit request     | Receptionist  |
+| `PATCH` | `/visitors/:id/status`    | Approve or reject visit request             | Employee      |
+| `PATCH` | `/visitors/:id/check-in`  | Check in visitor                            | Receptionist  |
+| `PATCH` | `/visitors/:id/check-out` | Check out visitor                           | Receptionist  |
+| `GET`   | `/visitors/pending`       | Get pending requests for logged-in employee | Employee      |
+| `GET`   | `/visitors/active`        | Get all active visits (excludes Cancelled)  | Authenticated |
+| `GET`   | `/visitors/history`       | Get visit history                           | Authenticated |
 
 **Register Visitor Request:**
+
 ```json
 {
   "visitor": {
@@ -411,19 +434,20 @@ Authorization: Bearer <your_jwt_token>
 
 #### Reports & Analytics
 
-| Method | Endpoint | Description | Access |
-|--------|----------|-------------|--------|
-| `GET` | `/reports/dashboard` | Get admin dashboard metrics | Admin |
-| `GET` | `/reports/activity-logs` | Get complete audit trail | Admin |
-| `GET` | `/reports/visitor-stats` | Get visitor statistics | Admin |
+| Method | Endpoint                 | Description                 | Access |
+| ------ | ------------------------ | --------------------------- | ------ |
+| `GET`  | `/reports/dashboard`     | Get admin dashboard metrics | Admin  |
+| `GET`  | `/reports/activity-logs` | Get complete audit trail    | Admin  |
+| `GET`  | `/reports/visitor-stats` | Get visitor statistics      | Admin  |
 
 #### Health Check
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Server health check |
+| Method | Endpoint  | Description         |
+| ------ | --------- | ------------------- |
+| `GET`  | `/health` | Server health check |
 
 **Health Check Response:**
+
 ```json
 {
   "status": "success",
@@ -437,6 +461,7 @@ Authorization: Bearer <your_jwt_token>
 ## Database Schema
 
 ### User Model
+
 ```javascript
 {
   name: String,           // Full name
@@ -450,6 +475,7 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 ### Visitor Model
+
 ```javascript
 {
   name: String,           // Visitor full name
@@ -462,6 +488,7 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 ### VisitRequest Model
+
 ```javascript
 {
   visitorId: ObjectId,    // Reference to Visitor
@@ -480,6 +507,7 @@ Authorization: Bearer <your_jwt_token>
 ```
 
 ### ActivityLog Model
+
 ```javascript
 {
   visitRequestId: ObjectId,  // Reference to VisitRequest
@@ -547,18 +575,18 @@ Authorization: Bearer <your_jwt_token>
 
 ### Backend Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm start` | Start server with Nodemon (auto-reload on changes) |
-| `npm run seed` | Seed database with demo users |
+| Command        | Description                                        |
+| -------------- | -------------------------------------------------- |
+| `npm start`    | Start server with Nodemon (auto-reload on changes) |
+| `npm run seed` | Seed database with demo users                      |
 
 ### Frontend Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Vite development server with HMR |
-| `npm run build` | Build optimized production bundle |
-| `npm run preview` | Preview production build locally |
+| Command           | Description                            |
+| ----------------- | -------------------------------------- |
+| `npm run dev`     | Start Vite development server with HMR |
+| `npm run build`   | Build optimized production bundle      |
+| `npm run preview` | Preview production build locally       |
 
 ---
 
@@ -608,19 +636,23 @@ Pending ──(Employee Approves)──► Approved
 ### Common Issues
 
 **1. MongoDB Connection Error**
+
 - Verify `MONGO_URI` is correct in `backend/.env`
 - Check MongoDB Atlas cluster is running
 - Ensure IP whitelist includes your current IP
 
 **2. CORS Errors**
+
 - Update CORS configuration in `backend/server.js`
 - Ensure `VITE_API_URL` matches backend URL exactly
 
 **3. JWT Token Errors**
+
 - Verify `JWT_SECRET` is set in `backend/.env`
 - Clear localStorage and re-login if token expired
 
 **4. Port Already in Use**
+
 - Change `PORT` in `backend/.env` (default: 5000)
 - For frontend, Vite will auto-increment (default: 5173)
 
@@ -642,3 +674,31 @@ This is a demonstration project for technical review. For production use:
 ---
 
 **Built with ❤️ using the MERN Stack**
+
+---
+
+## 🔄 Recent Updates & Enhancements
+
+### 🚀 Newly Added Features
+
+- **PDF & Excel Export:** Added single-click PDF (`jspdf`) and Excel (`xlsx`) export triggers on the Reports view for visitor logs and audit records.
+- **Dashboard Visual Analytics:** Integrated interactive Recharts bar and pie chart visualizations on the dashboard for real-time visitor traffic trends and department distribution.
+- **Advanced Search & Server-Side Filtering:** Upgraded date-range, status, department, and search filters to run dynamic MongoDB `$match` queries on the backend instead of client-side arrays.
+- **Bulk Visitor Operations:** Added multi-select table checkboxes along with backend batch operations (`updateMany`) for bulk pass approval and check-out.
+- **Multi-Stage Email Workflow:** Integrated automated Nodemailer notification alerts triggered across pass creation, approval, check-in, and check-out events.
+
+### 🛡️ Backend & Performance Optimizations
+
+- **Strict Business-Rule Validation:** Enforced status-transition locks, host-employee role verification, duplicate active-pass prevention, and required payload validations across Express routes.
+- **MongoDB Query Optimization:** Added single and compound indexes on `visitDate`, `status`, `createdAt`, and `department` fields in Mongoose schemas for high-traffic query optimization.
+- **Standardized API Response Contract:** Unified all Express controllers and global error middleware to follow a consistent JSON response shape (`{ success, message, data, error }`).
+
+---
+
+### 🛡️ Production Security & Reliability Hardening
+
+- **Credential & Log Protection:** Sanitized backend authentication controllers (`authController.js`) to remove sensitive password hashes and diagnostic logs from production output.
+- **Role-Based User Protection:** Secured user list enumeration (`GET /api/users`) behind `authorizeRoles("Admin", "Receptionist")` middleware to prevent unauthorized account discovery.
+- **Timezone Date Alignment:** Refactored visitor registration and date parsing logic to handle local calendar dates (`YYYY-MM-DD`), eliminating UTC timezone offset errors during pass creation.
+- **Server Resilience & API Security:** Enforced mandatory database connection initialization prior to HTTP listener startup, restricted CORS policies to authorized client domains, and integrated `helmet` with rate-limiting middleware.
+- **Notification Parity & UI Guardrails:** Standardized bulk checkout handlers to dispatch visitor/host notification alerts and added defensive array type checks (`Array.isArray()`) across React page states to prevent client-side render exceptions.

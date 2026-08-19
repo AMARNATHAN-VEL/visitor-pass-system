@@ -1,50 +1,58 @@
-const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
-const bcrypt = require('bcryptjs');
+const User = require("../models/User");
+const generateToken = require("../utils/generateToken");
+const bcrypt = require("bcryptjs");
+
+const sendControllerError = (res, statusCode, message) =>
+  res.status(statusCode).json({
+    success: false,
+    message,
+    error: message,
+    data: null,
+  });
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Admin only (or initial seed when no users exist)
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, role, department } = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide name, email, and password',
-      });
+      return sendControllerError(
+        res,
+        400,
+        "Please provide name, email, and password",
+      );
     }
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists',
-      });
+      return sendControllerError(res, 400, "User already exists");
     }
 
     // Determine if this is the initial seed (no users in DB yet)
     const userCount = await User.countDocuments();
 
     // If there are existing users, only Admin can register new users
-    if (userCount > 0 && (!req.user || req.user.role !== 'Admin')) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied. Only Admin can register new users.',
-      });
+    if (userCount > 0 && (!req.user || req.user.role !== "Admin")) {
+      return sendControllerError(
+        res,
+        403,
+        "Access denied. Only Admin can register new users.",
+      );
     }
 
     // Validate role if provided
-    const validRoles = ['Admin', 'Receptionist', 'Employee'];
-    const assignedRole = role || 'Employee';
+    const validRoles = ["Admin", "Receptionist", "Employee"];
+    const assignedRole = role || "Employee";
     if (!validRoles.includes(assignedRole)) {
-      return res.status(400).json({
-        success: false,
-        message: `Invalid role. Must be one of: ${validRoles.join(', ')}`,
-      });
+      return sendControllerError(
+        res,
+        400,
+        `Invalid role. Must be one of: ${validRoles.join(", ")}`,
+      );
     }
 
     // Hash password
@@ -63,6 +71,7 @@ const registerUser = async (req, res) => {
     if (user) {
       res.status(201).json({
         success: true,
+        message: "User registered successfully",
         data: {
           _id: user._id,
           name: user.name,
@@ -73,53 +82,39 @@ const registerUser = async (req, res) => {
         },
       });
     } else {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid user data',
-      });
+      sendControllerError(res, 400, "Invalid user data");
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error during registration',
-    });
+    next(error);
   }
 };
 
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     // Validate required fields
     if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide email and password',
-      });
+      return sendControllerError(res, 400, "Please provide email and password");
     }
 
     // Normalize email for consistent querying
     const cleanEmail = email.toLowerCase().trim();
 
     // Find user by email and explicitly select password field
-    const user = await User.findOne({ email: cleanEmail }).select('+password');
+    const user = await User.findOne({ email: cleanEmail }).select("+password");
 
-    // DEBUG LOGGING FOR RENDER
-    console.log('[AUTH DEBUG] Email received:', cleanEmail);
-    console.log('[AUTH DEBUG] User found in DB:', !!user);
     if (user) {
-      console.log('[AUTH DEBUG] Stored Password Hash:', user.password);
       const isMatch = await user.matchPassword(password);
-      console.log('[AUTH DEBUG] Bcrypt match result:', isMatch);
-      
+
       // Check if user exists and password matches
       if (isMatch) {
         res.json({
           success: true,
+          message: "Login successful",
           data: {
             _id: user._id,
             name: user.name,
@@ -130,23 +125,13 @@ const loginUser = async (req, res) => {
           },
         });
       } else {
-        res.status(401).json({
-          success: false,
-          message: 'Invalid email or password',
-        });
+        sendControllerError(res, 401, "Invalid email or password");
       }
     } else {
-      res.status(401).json({
-        success: false,
-        message: 'Invalid email or password',
-      });
+      sendControllerError(res, 401, "Invalid email or password");
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error during login',
-    });
+    next(error);
   }
 };
 

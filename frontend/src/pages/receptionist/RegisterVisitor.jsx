@@ -1,37 +1,48 @@
-import { useEffect, useState } from 'react';
-import { UserPlus, Clock, CalendarDays, Users, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { registerVisitor } from '../../services/visitorService';
-import { getUsers } from '../../services/userService';
+import { useEffect, useState } from "react";
+import {
+  UserPlus,
+  Clock,
+  CalendarDays,
+  Users,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import { registerVisitor } from "../../services/visitorService";
+import { getUsers } from "../../services/userService";
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200';
+  "w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
 
-const labelClass = 'mb-1.5 block text-sm font-medium text-slate-700';
+const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 
 export default function RegisterVisitor() {
   const [employees, setEmployees] = useState([]);
   const [form, setForm] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    govtId: '',
-    employeeId: '',
-    purpose: '',
-    visitDate: '',
-    expectedArrivalTime: '',
+    name: "",
+    phone: "",
+    email: "",
+    govtId: "",
+    employeeId: "",
+    purpose: "",
+    visitDate: "",
+    expectedArrivalTime: "",
   });
   const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const users = await getUsers('Employee');
+        const users = await getUsers("Employee");
         setEmployees(users);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load employees. Please try again.');
+        setError(
+          err.response?.data?.message ||
+            "Failed to load employees. Please try again.",
+        );
       } finally {
         setLoadingEmployees(false);
       }
@@ -42,59 +53,91 @@ export default function RegisterVisitor() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
-    const { name, phone, govtId, employeeId, purpose, visitDate, expectedArrivalTime } = form;
+    const {
+      name,
+      phone,
+      govtId,
+      employeeId,
+      purpose,
+      visitDate,
+      expectedArrivalTime,
+    } = form;
 
-    if (!name || !phone || !govtId || !employeeId || !purpose || !visitDate || !expectedArrivalTime) {
-      setError('Please fill in all required fields.');
+    if (
+      !name ||
+      !phone ||
+      !govtId ||
+      !employeeId ||
+      !purpose ||
+      !visitDate ||
+      !expectedArrivalTime
+    ) {
+      setError("Please fill in all required fields.");
       return;
     }
 
     setSubmitting(true);
     try {
       const { visitor } = await registerVisitor(form);
-      setSuccess(`Visitor ${visitor.name} registered successfully. Visit request created.`);
+      setSuccess(
+        `Visitor ${visitor.name} registered successfully. Visit request created.`,
+      );
       setForm({
-        name: '',
-        phone: '',
-        email: '',
-        govtId: '',
-        employeeId: '',
-        purpose: '',
-        visitDate: '',
-        expectedArrivalTime: '',
+        name: "",
+        phone: "",
+        email: "",
+        govtId: "",
+        employeeId: "",
+        purpose: "",
+        visitDate: "",
+        expectedArrivalTime: "",
       });
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to register visitor. Please try again.');
+      setError(
+        err.response?.data?.message ||
+          "Failed to register visitor. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   // Compute the latest permitted date (visit date cannot be in the past)
-  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const today = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("-");
 
   return (
     <div className="mx-auto max-w-3xl">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-slate-900">Register Visitor</h2>
+        <h2 className="text-xl font-semibold text-slate-900">
+          Register Visitor
+        </h2>
         <p className="mt-1 text-sm text-slate-500">
-          Create a visit request for an employee. The employee must approve it before check-in.
+          Create a visit request for an employee. The employee must approve it
+          before check-in.
         </p>
       </div>
 
       {/* Error banner */}
       {error && (
-        <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3" role="alert">
+        <div
+          className="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
+          role="alert"
+        >
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
           <p className="text-sm text-red-700">{error}</p>
         </div>
@@ -102,7 +145,10 @@ export default function RegisterVisitor() {
 
       {/* Success banner */}
       {success && (
-        <div className="mb-5 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3" role="status">
+        <div
+          className="mb-5 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
+          role="status"
+        >
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-500" />
           <p className="text-sm text-green-700">{success}</p>
         </div>
@@ -200,22 +246,31 @@ export default function RegisterVisitor() {
                   name="employeeId"
                   value={form.employeeId}
                   onChange={handleChange}
-                  className={`${inputClass} appearance-none pl-9 ${form.employeeId ? '' : 'text-slate-400'}`}
+                  className={`${inputClass} appearance-none pl-9 ${form.employeeId ? "" : "text-slate-400"}`}
                   disabled={loadingEmployees}
                   required
                 >
                   <option value="" disabled>
-                    {loadingEmployees ? 'Loading employees...' : 'Select an employee'}
+                    {loadingEmployees
+                      ? "Loading employees..."
+                      : "Select an employee"}
                   </option>
                   {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id} className="text-slate-900">
-                      {emp.name} {emp.department ? `- ${emp.department}` : ''}
+                    <option
+                      key={emp._id}
+                      value={emp._id}
+                      className="text-slate-900"
+                    >
+                      {emp.name} {emp.department ? `- ${emp.department}` : ""}
                     </option>
                   ))}
                 </select>
               </div>
               {employees.length === 0 && !loadingEmployees && (
-                <p className="mt-1 text-xs text-amber-600">No employees available. Ask an admin to create employee accounts.</p>
+                <p className="mt-1 text-xs text-amber-600">
+                  No employees available. Ask an admin to create employee
+                  accounts.
+                </p>
               )}
             </div>
             <div>
@@ -276,17 +331,17 @@ export default function RegisterVisitor() {
             type="button"
             onClick={() => {
               setForm({
-                name: '',
-                phone: '',
-                email: '',
-                govtId: '',
-                employeeId: '',
-                purpose: '',
-                visitDate: '',
-                expectedArrivalTime: '',
+                name: "",
+                phone: "",
+                email: "",
+                govtId: "",
+                employeeId: "",
+                purpose: "",
+                visitDate: "",
+                expectedArrivalTime: "",
               });
-              setError('');
-              setSuccess('');
+              setError("");
+              setSuccess("");
             }}
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
           >
@@ -297,8 +352,12 @@ export default function RegisterVisitor() {
             disabled={submitting || loadingEmployees}
             className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
-            {submitting ? 'Registering...' : 'Register Visitor'}
+            {submitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <UserPlus className="h-4 w-4" />
+            )}
+            {submitting ? "Registering..." : "Register Visitor"}
           </button>
         </div>
       </form>

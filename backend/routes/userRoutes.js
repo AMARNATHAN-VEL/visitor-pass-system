@@ -1,6 +1,6 @@
-const express = require('express');
-const { getUsers } = require('../controllers/userController');
-const { protect } = require('../middleware/authMiddleware');
+const express = require("express");
+const { getUsers } = require("../controllers/userController");
+const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -10,6 +10,6 @@ router.use(protect);
 // @route   GET /api/users
 // @desc    Get all users (optionally filtered by role via ?role=Employee)
 // @access  Protected (any authenticated user)
-router.get('/', getUsers);
+router.get("/", authorizeRoles("Admin", "Receptionist"), getUsers);
 
 module.exports = router;

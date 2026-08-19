@@ -1,45 +1,57 @@
-import { useEffect, useState, useCallback } from 'react';
-import { Users, UserPlus, Loader2, AlertCircle, CheckCircle2, Mail, Building2, ShieldCheck } from 'lucide-react';
-import { getUsers } from '../../services/userService';
-import { registerUser } from '../../services/authService';
+import { useEffect, useState, useCallback } from "react";
+import {
+  Users,
+  UserPlus,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  Mail,
+  Building2,
+  ShieldCheck,
+} from "lucide-react";
+import { getUsers } from "../../services/userService";
+import { registerUser } from "../../services/authService";
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200';
+  "w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
 
-const labelClass = 'mb-1.5 block text-sm font-medium text-slate-700';
+const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
 
 const ROLE_STYLES = {
-  Employee: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
-  Receptionist: 'bg-green-50 text-green-700 ring-green-200',
-  Admin: 'bg-purple-50 text-purple-700 ring-purple-200',
+  Employee: "bg-indigo-50 text-indigo-700 ring-indigo-200",
+  Receptionist: "bg-green-50 text-green-700 ring-green-200",
+  Admin: "bg-purple-50 text-purple-700 ring-purple-200",
 };
 
 const EMPTY_FORM = {
-  name: '',
-  email: '',
-  password: '',
-  role: 'Employee',
-  department: '',
+  name: "",
+  email: "",
+  password: "",
+  role: "Employee",
+  department: "",
 };
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      const role = filter === 'All' ? undefined : filter;
+      const role = filter === "All" ? undefined : filter;
       const data = await getUsers(role);
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load users. Please try again.');
+      setError(
+        err.response?.data?.message ||
+          "Failed to load users. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -52,41 +64,50 @@ export default function ManageUsers() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     const { name, email, password, role, department } = form;
     if (!name || !email || !password) {
-      setError('Please fill in name, email, and password.');
+      setError("Please fill in name, email, and password.");
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+      setError("Password must be at least 6 characters long.");
       return;
     }
 
     setSubmitting(true);
     try {
-      const created = await registerUser({ name, email, password, role, department });
+      const created = await registerUser({
+        name,
+        email,
+        password,
+        role,
+        department,
+      });
       setSuccess(`Account created for ${created.name} (${created.role}).`);
       setForm(EMPTY_FORM);
       setFilter(role);
       await fetchUsers();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create account. Please try again.');
+      setError(
+        err.response?.data?.message ||
+          "Failed to create account. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   const filteredUsers =
-    filter === 'All' ? users : users.filter((u) => u.role === filter);
+    filter === "All" ? users : users.filter((u) => u.role === filter);
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -100,7 +121,10 @@ export default function ManageUsers() {
 
       {/* Error banner */}
       {error && (
-        <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3" role="alert">
+        <div
+          className="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
+          role="alert"
+        >
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
           <p className="text-sm text-red-700">{error}</p>
         </div>
@@ -108,7 +132,10 @@ export default function ManageUsers() {
 
       {/* Success banner */}
       {success && (
-        <div className="mb-5 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3" role="status">
+        <div
+          className="mb-5 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
+          role="status"
+        >
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-500" />
           <p className="text-sm text-green-700">{success}</p>
         </div>
@@ -216,7 +243,7 @@ export default function ManageUsers() {
                 ) : (
                   <UserPlus className="h-4 w-4" />
                 )}
-                {submitting ? 'Creating...' : 'Create Account'}
+                {submitting ? "Creating..." : "Create Account"}
               </button>
             </form>
           </div>
@@ -233,18 +260,18 @@ export default function ManageUsers() {
 
               {/* Role filter */}
               <div className="flex overflow-hidden rounded-lg border border-slate-300">
-                {['All', 'Employee', 'Receptionist'].map((role) => (
+                {["All", "Employee", "Receptionist"].map((role) => (
                   <button
                     key={role}
                     type="button"
                     onClick={() => {
                       setFilter(role);
-                      setError('');
+                      setError("");
                     }}
                     className={`px-3 py-1.5 text-xs font-medium transition ${
                       filter === role
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-white text-slate-600 hover:bg-slate-50'
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white text-slate-600 hover:bg-slate-50"
                     }`}
                   >
                     {role}
@@ -264,10 +291,12 @@ export default function ManageUsers() {
             {!loading && filteredUsers.length === 0 && (
               <div className="flex flex-col items-center gap-2 py-12 text-center">
                 <Users className="h-10 w-10 text-slate-300" />
-                <p className="text-sm font-medium text-slate-600">No accounts found</p>
+                <p className="text-sm font-medium text-slate-600">
+                  No accounts found
+                </p>
                 <p className="text-sm text-slate-400">
-                  {filter === 'All'
-                    ? 'Create your first account to get started.'
+                  {filter === "All"
+                    ? "Create your first account to get started."
                     : `No ${filter.toLowerCase()} accounts yet.`}
                 </p>
               </div>
@@ -277,13 +306,19 @@ export default function ManageUsers() {
             {!loading && filteredUsers.length > 0 && (
               <ul className="divide-y divide-slate-100">
                 {filteredUsers.map((user) => (
-                  <li key={user._id} className="flex items-center justify-between gap-4 py-3">
+                  <li
+                    key={user._id}
+                    className="flex items-center justify-between gap-4 py-3"
+                  >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="truncate font-medium text-slate-900">{user.name}</p>
+                        <p className="truncate font-medium text-slate-900">
+                          {user.name}
+                        </p>
                         <span
                           className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${
-                            ROLE_STYLES[user.role] || 'bg-slate-100 text-slate-600 ring-slate-200'
+                            ROLE_STYLES[user.role] ||
+                            "bg-slate-100 text-slate-600 ring-slate-200"
                           }`}
                         >
                           <ShieldCheck className="h-3 w-3" />
