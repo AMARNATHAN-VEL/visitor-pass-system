@@ -15,3 +15,91 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+.visitor-pass-section-title {
+  color: #0f172a;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.visitor-pass-details-grid {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #cbd5e1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.visitor-pass-detail {
+  min-width: 0;
+  background: #fff;
+  padding: 0.7rem 0.8rem;
+}
+
+.visitor-pass-detail dt {
+  color: #64748b;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.visitor-pass-detail dd {
+  overflow-wrap: anywhere;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0.25rem 0 0;
+}
+
+@media (min-width: 640px) {
+  .visitor-pass-details-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media print {
+  @page {
+    margin: 12mm;
+    size: A4 portrait;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .visitor-pass-print-root,
+  .visitor-pass-print-root * {
+    visibility: visible !important;
+  }
+
+  .visitor-pass-print-root {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+
+  .visitor-pass-sheet {
+    width: 100% !important;
+    max-width: none !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .visitor-pass-content {
+    padding: 0 !important;
+  }
+
+  .visitor-pass-print-actions {
+    display: none !important;
+  }
+}

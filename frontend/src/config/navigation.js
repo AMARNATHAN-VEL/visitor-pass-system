@@ -21,6 +21,11 @@ export const roleNavItems = {
   ],
   Receptionist: [
     {
+      to: "/receptionist/dashboard",
+      label: "Queue Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
       to: "/receptionist/register-visitor",
       label: "Register Visitor",
       icon: UserPlus,

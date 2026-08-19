@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { getDashboardMetrics } from "../../services/reportService";
 import VisitorAnalytics from "../../components/VisitorAnalytics";
+import QueueDashboard from "../../components/QueueDashboard";
 
 const METRICS = [
   {
@@ -149,6 +150,7 @@ export default function AdminDashboard() {
       )}
 
       {!loading && metrics && <VisitorAnalytics />}
+      {!loading && metrics && <QueueDashboard />}
     </div>
   );
 }

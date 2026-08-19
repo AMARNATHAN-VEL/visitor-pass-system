@@ -10,7 +10,14 @@ const visitRequestSchema = new mongoose.Schema(
     employeeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Employee reference is required"],
+    },
+    targetDepartment: {
+      type: String,
+      trim: true,
+    },
+    company: {
+      type: String,
+      trim: true,
     },
     purpose: {
       type: String,
@@ -25,6 +32,14 @@ const visitRequestSchema = new mongoose.Schema(
       type: String,
       required: [true, "Expected arrival time is required"],
       trim: true,
+    },
+    expectedEndTime: {
+      type: Date,
+    },
+    totalExtendedMinutes: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     passCode: {
       type: String,
@@ -44,6 +59,18 @@ const visitRequestSchema = new mongoose.Schema(
       ],
       default: "Pending",
     },
+    queuePosition: {
+      type: Number,
+      min: 1,
+    },
+    assignedEmployee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    meetingStatus: {
+      type: String,
+      enum: ["ONGOING", "IN_QUEUE", "COMPLETED"],
+    },
     checkInTime: {
       type: Date,
     },
@@ -53,6 +80,13 @@ const visitRequestSchema = new mongoose.Schema(
     remarks: {
       type: String,
       trim: true,
+    },
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    approvedAt: {
+      type: Date,
     },
   },
   {
@@ -66,6 +100,11 @@ visitRequestSchema.index({ visitDate: 1 });
 visitRequestSchema.index({ visitDate: 1, status: 1 });
 visitRequestSchema.index({ visitorId: 1, status: 1 });
 visitRequestSchema.index({ employeeId: 1, status: 1, createdAt: -1 });
+visitRequestSchema.index({
+  assignedEmployee: 1,
+  meetingStatus: 1,
+  queuePosition: 1,
+});
 visitRequestSchema.index(
   { visitorId: 1 },
   {

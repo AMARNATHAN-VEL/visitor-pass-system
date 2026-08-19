@@ -6,6 +6,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  Printer,
   Users,
 } from "lucide-react";
 import {
@@ -14,6 +15,7 @@ import {
   checkOutVisitor,
 } from "../../services/visitorService";
 import VisitorAnalytics from "../../components/VisitorAnalytics";
+import VisitorPassModal from "../../components/VisitorPassModal";
 
 const STATUS_STYLES = {
   Pending: "bg-amber-50 text-amber-700 ring-amber-200",
@@ -59,6 +61,7 @@ export default function CheckInOut() {
   const [actingId, setActingId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [selectedVisit, setSelectedVisit] = useState(null);
 
   const fetchVisits = useCallback(async () => {
     setLoading(true);
@@ -318,6 +321,16 @@ export default function CheckInOut() {
                             Out at {formatDateTime(visit.checkOutTime)}
                           </span>
                         )}
+                        {(isCheckedIn || isCheckedOut) && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVisit(visit)}
+                            className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-indigo-300 px-3 py-1.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          >
+                            <Printer className="h-3.5 w-3.5" />
+                            Print Pass
+                          </button>
+                        )}
                         {!canCheckIn &&
                           !canCheckOut &&
                           !isPending &&
@@ -337,6 +350,10 @@ export default function CheckInOut() {
       )}
 
       {!loading && <VisitorAnalytics />}
+      <VisitorPassModal
+        visit={selectedVisit}
+        onClose={() => setSelectedVisit(null)}
+      />
     </div>
   );
 }

@@ -54,6 +54,39 @@ export const checkOutVisitor = async (id) => {
 };
 
 /**
+ * Extend an active meeting by up to 10 minutes (assigned employee only).
+ * @param {string} id - Visit request id.
+ * @param {number} extensionMinutes - Additional minutes, from 1 to 10.
+ * @returns {Promise<Object>}
+ */
+export const extendVisitTime = async (id, extensionMinutes) => {
+  const response = await api.post(`/visitors/${id}/extend-time`, {
+    extensionMinutes,
+  });
+  return response.data.data;
+};
+
+/**
+ * Get each employee's ongoing meeting and waiting queue.
+ * @returns {Promise<Array<Object>>}
+ */
+export const getActiveQueues = async () => {
+  const response = await api.get("/visitors/active-queues");
+  return response.data.data;
+};
+
+/**
+ * Move a queued visitor to another employee.
+ * @param {string} id - Visit request id.
+ * @param {string} employeeId - Destination employee id.
+ * @returns {Promise<Object>}
+ */
+export const reallotVisitor = async (id, employeeId) => {
+  const response = await api.put(`/visitors/${id}/reallot`, { employeeId });
+  return response.data.data;
+};
+
+/**
  * Get pending visit requests for the logged-in employee.
  * @returns {Promise<Array<Object>>}
  */

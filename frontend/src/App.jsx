@@ -6,6 +6,7 @@ import { useAuth } from "./context/AuthContext";
 // Receptionist pages
 import RegisterVisitor from "./pages/receptionist/RegisterVisitor";
 import CheckInOut from "./pages/receptionist/CheckInOut";
+import ReceptionistDashboard from "./pages/receptionist/ReceptionistDashboard";
 // Employee pages
 import PendingRequests from "./pages/employee/PendingRequests";
 // Admin pages
@@ -16,7 +17,7 @@ import ActivityLogs from "./pages/admin/ActivityLogs";
 
 const ROLE_HOME = {
   Admin: "/admin/dashboard",
-  Receptionist: "/receptionist/register-visitor",
+  Receptionist: "/receptionist/dashboard",
   Employee: "/employee/pending-requests",
 };
 
@@ -36,6 +37,14 @@ function App() {
         <Route path="/" element={<RoleHome />} />
 
         {/* Receptionist routes */}
+        <Route
+          path="/receptionist/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["Receptionist"]}>
+              <ReceptionistDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/receptionist/register-visitor"
           element={

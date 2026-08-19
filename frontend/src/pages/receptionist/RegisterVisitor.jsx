@@ -22,6 +22,7 @@ export default function RegisterVisitor() {
     name: "",
     phone: "",
     email: "",
+    company: "",
     govtId: "",
     employeeId: "",
     purpose: "",
@@ -95,6 +96,7 @@ export default function RegisterVisitor() {
         name: "",
         phone: "",
         email: "",
+        company: "",
         govtId: "",
         employeeId: "",
         purpose: "",
@@ -225,6 +227,21 @@ export default function RegisterVisitor() {
                 required
               />
             </div>
+            <div>
+              <label htmlFor="company" className={labelClass}>
+                Company / Organization{" "}
+                <span className="text-slate-400">(optional)</span>
+              </label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                value={form.company}
+                onChange={handleChange}
+                placeholder="Acme Corporation"
+                className={inputClass}
+              />
+            </div>
           </div>
         </fieldset>
 
@@ -334,6 +351,7 @@ export default function RegisterVisitor() {
                 name: "",
                 phone: "",
                 email: "",
+                company: "",
                 govtId: "",
                 employeeId: "",
                 purpose: "",

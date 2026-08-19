@@ -4,6 +4,9 @@ const {
   updateVisitStatus,
   checkInVisitor,
   checkOutVisitor,
+  extendVisitTime,
+  getActiveQueues,
+  reallotVisitor,
   getPendingVisits,
   getActiveVisits,
   bulkVisitorAction,
@@ -34,6 +37,25 @@ router.patch("/:id/check-in", authorizeRoles("Receptionist"), checkInVisitor);
 // @desc    Check out a visitor
 // @access  Receptionist
 router.patch("/:id/check-out", authorizeRoles("Receptionist"), checkOutVisitor);
+
+// @route   POST /api/visitors/:id/extend-time
+// @desc    Extend an active meeting by up to 10 minutes
+// @access  Employee
+router.post("/:id/extend-time", authorizeRoles("Employee"), extendVisitTime);
+
+// @route   GET /api/visitors/active-queues
+// @desc    Get ongoing meetings and waiting queues by employee
+// @access  Admin, Receptionist
+router.get(
+  "/active-queues",
+  authorizeRoles("Admin", "Receptionist"),
+  getActiveQueues,
+);
+
+// @route   PUT /api/visitors/:id/reallot
+// @desc    Move a queued visitor to another employee
+// @access  Receptionist
+router.put("/:id/reallot", authorizeRoles("Receptionist"), reallotVisitor);
 
 // @route   GET /api/visitors/pending
 // @desc    Get pending visit requests for the logged-in employee
